@@ -5,8 +5,10 @@ info:
   description: API for managing tasks and users
 
 servers:
-  - url: http://localhost:3000
-    description: Local development server
+   - url: http://localhost:3000
+     description: Local server
+   - url: https://taskmaster-pro-y6q8.onrender.com
+     description: Render production server
 
 paths:
   /api/users:
