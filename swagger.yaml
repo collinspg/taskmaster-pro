@@ -1,0 +1,193 @@
+openapi: 3.0.0
+info:
+  title: Task Master Pro API
+  version: 1.0.0
+  description: API for managing tasks and users
+
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+
+paths:
+  /api/users:
+    get:
+      summary: Get all users
+      responses:
+        '200':
+          description: A list of users
+    post:
+      summary: Create a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: User created
+
+  /api/users/{id}:
+    get:
+      summary: Get user by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A single user
+    put:
+      summary: Update user by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: User updated
+    delete:
+      summary: Delete user by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User deleted
+
+  /api/tasks:
+    get:
+      summary: Get all tasks
+      responses:
+        '200':
+          description: List of tasks
+    post:
+      summary: Create new task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Task'
+      responses:
+        '201':
+          description: Task created
+
+  /api/tasks/{id}:
+    get:
+      summary: Get task by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A single task
+    put:
+      summary: Update task by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Task'
+      responses:
+        '200':
+          description: Task updated
+    delete:
+      summary: Delete task by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Task deleted
+
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - googleId
+        - name
+        - email
+      properties:
+        googleId:
+          type: string
+          example: "114739203847203984720"
+          description: "Google OAuth ID"
+        name:
+          type: string
+          example: "John Doe"
+        email:
+          type: string
+          format: email
+          example: "john@example.com"
+        avatar:
+          type: string
+          format: uri
+          example: "https://example.com/avatar.jpg"
+        role:
+          type: string
+          enum: [admin, manager, user]
+          example: "user"
+          description: "User role (admin, manager, user)"
+
+    Task:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+          example: "Prepare team meeting"
+          description: "Task title"
+        description:
+          type: string
+          example: "Schedule and lead the first team sync"
+        status:
+          type: string
+          enum: [pending, in progress, completed]
+          example: "pending"
+          description: "Task status"
+        priority:
+          type: string
+          enum: [low, medium, high]
+          example: "high"
+          description: "Task priority"
+        dueDate:
+          type: string
+          format: date-time
+          example: "2025-08-01T12:00:00Z"
+        assignedTo:
+          type: string
+          example: "66bc3c7e27e6c51cf0f7e761"
+          description: "User ID to assign the task to"
+        projectId:
+          type: string
+          example: "66bc3d8a27e6c51cf0f7e762"
+          description: "Optional project ID"

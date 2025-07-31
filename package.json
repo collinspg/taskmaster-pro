@@ -1,7 +1,6 @@
 {
   "name": "taskmaster-pro",
   "version": "1.0.0",
-  "description": "",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
@@ -15,9 +14,29 @@
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "express-validator": "^7.2.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.17.0",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0",
+    "swagger-ui-express": "^5.0.1",
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
-  }
+    "eslint": "^9.32.0",
+    "jest": "^30.0.5",
+    "nodemon": "^3.1.10",
+    "supertest": "^7.1.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/collinspg/taskmaster-pro.git"
+  },
+  "bugs": {
+    "url": "https://github.com/collinspg/taskmaster-pro/issues"
+  },
+  "homepage": "https://github.com/collinspg/taskmaster-pro#readme",
+  "description": ""
 }
