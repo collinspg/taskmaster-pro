@@ -10,6 +10,8 @@ const errorHandler = require('./src/middlewares/errorHandler');
 
 const userRoutes = require('./src/routes/userRoutes');
 const taskRoutes = require('./src/routes/taskRoutes');
+const projectRoutes = require('./src/routes/projectRoutes');
+const teamRoutes = require('./src/routes/teamRoutes');
 
 const app = express();
 const swaggerDocument = YAML.load('./swagger.yaml');
@@ -26,6 +28,8 @@ app.get('/', (req, res) => {
 
 app.use('/api/users', userRoutes);
 app.use('/api/tasks', taskRoutes);
+app.use('/api/projects', projectRoutes);
+app.use('/api/teams', teamRoutes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use(errorHandler);

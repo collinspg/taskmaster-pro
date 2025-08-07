@@ -128,6 +128,142 @@ paths:
       responses:
         '200':
           description: Task deleted
+  /api/projects:
+    get:
+      summary: Get all projects
+      tags: [Projects]
+      responses:
+        '200':
+          description: A list of projects
+
+    post:
+      summary: Create a new project
+      tags: [Projects]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Project'
+      responses:
+        '201':
+          description: Project created
+
+  /api/projects/{id}:
+    get:
+      summary: Get a project by ID
+      tags: [Projects]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Project found
+        '404':
+          description: Project not found
+
+    put:
+      summary: Update a project
+      tags: [Projects]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Project'
+      responses:
+        '200':
+          description: Project updated
+
+    delete:
+      summary: Delete a project
+      tags: [Projects]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Project deleted
+  /api/teams:
+    get:
+      summary: Get all teams
+      tags: [Teams]
+      responses:
+        '200':
+          description: A list of teams
+
+    post:
+      summary: Create a new team
+      tags: [Teams]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Team'
+      responses:
+        '201':
+          description: Team created
+
+  /api/teams/{id}:
+    get:
+      summary: Get a team by ID
+      tags: [Teams]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Team found
+        '404':
+          description: Team not found
+
+    put:
+      summary: Update a team
+      tags: [Teams]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Team'
+      responses:
+        '200':
+          description: Team updated
+
+    delete:
+      summary: Delete a team
+      tags: [Teams]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Team deleted
 
 components:
   schemas:
@@ -193,3 +329,58 @@ components:
           type: string
           example: "66bc3d8a27e6c51cf0f7e762"
           description: "Optional project ID"
+          
+    Project:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: "Marketing Website Revamp"
+        description:
+          type: string
+          example: "Revamping the entire marketing website for Q3 goals."
+        tasks:
+          type: array
+          items:
+            type: string
+          example: ["66bc3f3e27e6c51cf0f7e765", "66bc3f4a27e6c51cf0f7e766"]
+        members:
+          type: array
+          items:
+            type: string
+          example: ["66bc3c7e27e6c51cf0f7e761", "66bc3e9e27e6c51cf0f7e764"]
+
+    Team:
+      type: object
+      required:
+        - name
+        - members
+      properties:
+        name:
+          type: string
+          example: "Engineering Team"
+        description:
+          type: string
+          example: "Core backend and frontend engineers working on TaskMaster Pro"
+        members:
+          type: array
+          items:
+            type: string
+          example: ["66bc3c7e27e6c51cf0f7e761", "66bc3c8a27e6c51cf0f7e762"]
+          description: "Array of User IDs who are team members"
+        projects:
+          type: array
+          items:
+            type: string
+          example: ["66bc3d8a27e6c51cf0f7e762", "66bc3d8a27e6c51cf0f7e763"]
+          description: "Array of Project IDs assigned to this team"
+        leader:
+          type: string
+          example: "66bc3c7e27e6c51cf0f7e761"
+          description: "User ID of the team leader"
+        createdBy:
+          type: string
+          example: "66bc3c7e27e6c51cf0f7e761"
+          description: "User ID of who created the team"

@@ -24,6 +24,8 @@ router.put('/:id', taskValidationRules, validateRequest, taskController.updateTa
 // Rutas sin validación
 router.get('/', taskController.getAllTasks);
 router.get('/:id', taskController.getTaskById);
+// GET /tasks/project/:projectId - Get tasks for specific project
+router.get('/project/:projectId', taskController.getTasksByProject);
 router.delete('/:id', taskController.deleteTask);
 
 module.exports = router;
