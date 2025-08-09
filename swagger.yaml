@@ -1,26 +1,83 @@
 openapi: 3.0.0
 info:
-  title: Task Master Pro API
+  title: TaskMaster Pro API
   version: 1.0.0
-  description: API for managing tasks and users
+  description: API para gestión de tareas, proyectos y equipos con OAuth
+  contact:
+    email: soporte@taskmasterpro.com
 
 servers:
-   - url: https://taskmaster-pro-y6q8.onrender.com
-     description: Render production server
-   - url: http://localhost:3000
-     description: Local server
+  - url: https://taskmaster-pro-y6q8.onrender.com/api
+    description: Servidor de producción
+  - url: http://localhost:3000/api
+    description: Servidor local
+
+tags:
+  - name: Auth
+    description: Autenticación OAuth
+  - name: Users
+    description: Operaciones con usuarios
+  - name: Tasks
+    description: Gestión de tareas (requiere autenticación)
+  - name: Projects
+    description: Gestión de proyectos (requiere autenticación)
+  - name: Teams
+    description: Gestión de equipos
+
+securitySchemes:
+  googleOAuth:
+    type: oauth2
+    flows:
+      authorizationCode:
+        authorizationUrl: https://accounts.google.com/o/oauth2/v2/auth
+        tokenUrl: https://oauth2.googleapis.com/token
+        scopes:
+          email: Ver dirección de email
+          profile: Ver perfil básico
 
 paths:
-  /api/users:
+  /auth/google:
     get:
-      summary: Get all users
-      tags: [Users]  
+      tags: [Auth]
+      summary: Iniciar autenticación con Google
+      description: Redirige a Google OAuth para autenticación
+      responses:
+        '302':
+          description: Redirección a Google
+  /auth/google/callback:
+    get:
+      tags: [Auth]
+      summary: Callback de Google OAuth
+      description: Endpoint de retorno después de autenticar en Google
+      responses:
+        '302':
+          description: Redirección a la interfaz
+        '401':
+          description: Autenticación fallida
+  /auth/logout:
+    get:
+      tags: [Auth]
+      summary: Cerrar sesión
+      responses:
+        '302':
+          description: Redirección al inicio
+
+  /users:
+    get:
+      tags: [Users]
+      summary: Obtener todos los usuarios
       responses:
         '200':
-          description: A list of users
+          description: Lista de usuarios
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
     post:
-      summary: Create a new user
-      tags: [Users]  
+      tags: [Users]
+      summary: Crear usuario
       requestBody:
         required: true
         content:
@@ -29,12 +86,14 @@ paths:
               $ref: '#/components/schemas/User'
       responses:
         '201':
-          description: User created
+          description: Usuario creado
+        '400':
+          description: Validación fallida
 
-  /api/users/{id}:
+  /users/{id}:
     get:
-      summary: Get user by ID
-      tags: [Users] 
+      tags: [Users]
+      summary: Obtener usuario por ID
       parameters:
         - in: path
           name: id
@@ -43,10 +102,12 @@ paths:
             type: string
       responses:
         '200':
-          description: A single user
+          description: Usuario encontrado
+        '404':
+          description: Usuario no encontrado
     put:
-      summary: Update user by ID
-      tags: [Users] 
+      tags: [Users]
+      summary: Actualizar usuario
       parameters:
         - in: path
           name: id
@@ -61,142 +122,12 @@ paths:
               $ref: '#/components/schemas/User'
       responses:
         '200':
-          description: User updated
+          description: Usuario actualizado
+        '400':
+          description: Validación fallida
     delete:
-      summary: Delete user by ID
-      tags: [Users] 
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: User deleted
-
-  /api/tasks:
-    get:
-      summary: Get all tasks
-      tags: [Tasks]  
-      responses:
-        '200':
-          description: List of tasks
-    post:
-      summary: Create new task
-      tags: [Tasks] 
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Task'
-      responses:
-        '201':
-          description: Task created
-
-  /api/tasks/{id}:
-    get:
-      summary: Get task by ID
-      tags: [Tasks]  
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: A single task
-    put:
-      summary: Update task by ID
-      tags: [Tasks]  
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Task'
-      responses:
-        '200':
-          description: Task updated
-    delete:
-      summary: Delete task by ID
-      tags: [Tasks]  
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Task deleted
-  /api/projects:
-    get:
-      summary: Get all projects
-      tags: [Projects]
-      responses:
-        '200':
-          description: A list of projects
-
-    post:
-      summary: Create a new project
-      tags: [Projects]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Project'
-      responses:
-        '201':
-          description: Project created
-
-  /api/projects/{id}:
-    get:
-      summary: Get a project by ID
-      tags: [Projects]
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Project found
-        '404':
-          description: Project not found
-
-    put:
-      summary: Update a project
-      tags: [Projects]
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Project'
-      responses:
-        '200':
-          description: Project updated
-
-    delete:
-      summary: Delete a project
-      tags: [Projects]
+      tags: [Users]
+      summary: Eliminar usuario
       parameters:
         - in: path
           name: id
@@ -205,32 +136,46 @@ paths:
             type: string
       responses:
         '204':
-          description: Project deleted
-  /api/teams:
+          description: Usuario eliminado
+
+  /tasks:
     get:
-      summary: Get all teams
-      tags: [Teams]
+      tags: [Tasks]
+      summary: Obtener todas las tareas
+      security: []
       responses:
         '200':
-          description: A list of teams
-
+          description: Lista de tareas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
     post:
-      summary: Create a new team
-      tags: [Teams]
+      tags: [Tasks]
+      summary: Crear tarea
+      security:
+        - googleOAuth: [email, profile]
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Team'
+              $ref: '#/components/schemas/Task'
       responses:
         '201':
-          description: Team created
+          description: Tarea creada
+        '400':
+          description: Validación fallida
+        '401':
+          description: No autenticado
 
-  /api/teams/{id}:
+  /tasks/{id}:
     get:
-      summary: Get a team by ID
-      tags: [Teams]
+      tags: [Tasks]
+      summary: Obtener tarea por ID
+      security: []
       parameters:
         - in: path
           name: id
@@ -239,13 +184,14 @@ paths:
             type: string
       responses:
         '200':
-          description: Team found
+          description: Tarea encontrada
         '404':
-          description: Team not found
-
+          description: Tarea no encontrada
     put:
-      summary: Update a team
-      tags: [Teams]
+      tags: [Tasks]
+      summary: Actualizar tarea
+      security:
+        - googleOAuth: [email, profile]
       parameters:
         - in: path
           name: id
@@ -257,14 +203,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Team'
+              $ref: '#/components/schemas/Task'
       responses:
         '200':
-          description: Team updated
-
+          description: Tarea actualizada
+        '401':
+          description: No autenticado
     delete:
-      summary: Delete a team
-      tags: [Teams]
+      tags: [Tasks]
+      summary: Eliminar tarea
+      security:
+        - googleOAuth: [email, profile]
       parameters:
         - in: path
           name: id
@@ -273,7 +222,143 @@ paths:
             type: string
       responses:
         '204':
-          description: Team deleted
+          description: Tarea eliminada
+
+  /projects:
+    get:
+      tags: [Projects]
+      summary: Obtener todos los proyectos
+      responses:
+        '200':
+          description: Lista de proyectos
+    post:
+      tags: [Projects]
+      summary: Crear proyecto
+      security:
+        - googleOAuth: [email, profile]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Project'
+      responses:
+        '201':
+          description: Proyecto creado
+        '400':
+          description: Validación fallida
+
+  /projects/{id}:
+    get:
+      tags: [Projects]
+      summary: Obtener proyecto por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Proyecto encontrado
+    put:
+      tags: [Projects]
+      summary: Actualizar proyecto
+      security:
+        - googleOAuth: [email, profile]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Project'
+      responses:
+        '200':
+          description: Proyecto actualizado
+    delete:
+      tags: [Projects]
+      summary: Eliminar proyecto
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Proyecto eliminado
+
+  /teams:
+    get:
+      tags: [Teams]
+      summary: Obtener todos los equipos
+      responses:
+        '200':
+          description: Lista de equipos
+    post:
+      tags: [Teams]
+      summary: Crear equipo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Team'
+      responses:
+        '201':
+          description: Equipo creado
+        '400':
+          description: Validación fallida
+
+  /teams/{id}:
+    get:
+      tags: [Teams]
+      summary: Obtener equipo por ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Equipo encontrado
+    put:
+      tags: [Teams]
+      summary: Actualizar equipo
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Team'
+      responses:
+        '200':
+          description: Equipo actualizado
+    delete:
+      tags: [Teams]
+      summary: Eliminar equipo
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Equipo eliminado
 
 components:
   schemas:
@@ -286,15 +371,14 @@ components:
       properties:
         googleId:
           type: string
-          example: "114739203847203984720"
-          description: "Google OAuth ID"
+          example: "1234567890"
         name:
           type: string
-          example: "John Doe"
+          example: "Juan Pérez"
         email:
           type: string
           format: email
-          example: "john@example.com"
+          example: "juan@example.com"
         avatar:
           type: string
           format: uri
@@ -302,8 +386,7 @@ components:
         role:
           type: string
           enum: [admin, manager, user]
-          example: "user"
-          description: "User role (admin, manager, user)"
+          default: "user"
 
     Task:
       type: object
@@ -312,34 +395,28 @@ components:
       properties:
         title:
           type: string
-          example: "Prepare team meeting"
-          description: "Task title"
+          example: "Implementar OAuth"
         description:
           type: string
-          example: "Schedule and lead the first team sync"
+          example: "Integrar autenticación con Google"
         status:
           type: string
           enum: [pending, in progress, completed]
-          example: "pending"
-          description: "Task status"
+          default: "pending"
         priority:
           type: string
           enum: [low, medium, high]
-          example: "high"
-          description: "Task priority"
+          default: "medium"
         dueDate:
           type: string
           format: date-time
-          example: "2025-08-01T12:00:00Z"
         assignedTo:
           type: string
-          example: "66bc3c7e27e6c51cf0f7e761"
-          description: "User ID to assign the task to"
+          format: mongo-id
         projectId:
           type: string
-          example: "66bc3d8a27e6c51cf0f7e762"
-          description: "Optional project ID"
-          
+          format: mongo-id
+
     Project:
       type: object
       required:
@@ -347,20 +424,20 @@ components:
       properties:
         name:
           type: string
-          example: "Marketing Website Revamp"
+          example: "TaskMaster Pro"
         description:
           type: string
-          example: "Revamping the entire marketing website for Q3 goals."
-        tasks:
-          type: array
-          items:
-            type: string
-          example: ["66bc3f3e27e6c51cf0f7e765", "66bc3f4a27e6c51cf0f7e766"]
+          example: "Sistema de gestión de tareas"
         members:
           type: array
           items:
             type: string
-          example: ["66bc3c7e27e6c51cf0f7e761", "66bc3e9e27e6c51cf0f7e764"]
+            format: mongo-id
+        tasks:
+          type: array
+          items:
+            type: string
+            format: mongo-id
 
     Team:
       type: object
@@ -370,27 +447,23 @@ components:
       properties:
         name:
           type: string
-          example: "Engineering Team"
+          example: "Equipo de Desarrollo"
         description:
           type: string
-          example: "Core backend and frontend engineers working on TaskMaster Pro"
+          example: "Equipo principal de desarrollo"
         members:
           type: array
           items:
             type: string
-          example: ["66bc3c7e27e6c51cf0f7e761", "66bc3c8a27e6c51cf0f7e762"]
-          description: "Array of User IDs who are team members"
+            format: mongo-id
         projects:
           type: array
           items:
             type: string
-          example: ["66bc3d8a27e6c51cf0f7e762", "66bc3d8a27e6c51cf0f7e763"]
-          description: "Array of Project IDs assigned to this team"
+            format: mongo-id
         leader:
           type: string
-          example: "66bc3c7e27e6c51cf0f7e761"
-          description: "User ID of the team leader"
-        createdBy:
-          type: string
-          example: "66bc3c7e27e6c51cf0f7e761"
-          description: "User ID of who created the team"
+          format: mongo-id
+
+  security:
+    - googleOAuth: [email, profile]

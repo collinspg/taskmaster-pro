@@ -3,6 +3,7 @@ const { body } = require('express-validator');
 const router = express.Router();
 const taskController = require('../controllers/taskController');
 const validateRequest = require('../middlewares/validateRequest');
+const auth = require('../middlewares/auth');
 
 // Validaciones comunes
 const taskValidationRules = [
@@ -16,10 +17,10 @@ const taskValidationRules = [
 ];
 
 // POST /tasks
-router.post('/', taskValidationRules, validateRequest, taskController.createTask);
+router.post('/', auth, taskValidationRules, validateRequest, taskController.createTask);
 
 // PUT /tasks/:id
-router.put('/:id', taskValidationRules, validateRequest, taskController.updateTask);
+router.put('/:id', auth, taskValidationRules, validateRequest, taskController.updateTask);
 
 // Rutas sin validación
 router.get('/', taskController.getAllTasks);
