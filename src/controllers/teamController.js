@@ -3,7 +3,7 @@ const Team = require('../models/teamModel');
 exports.createTeam = async (req, res, next) => {
   try {
     const { name, members } = req.body;
-    const team = new Team({ name, members, createdBy: req.userId });
+    const team = new Team({ name, members, createdBy: req.user?.id });
     await team.save();
     res.status(201).json(team);
   } catch (err) {

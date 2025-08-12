@@ -2,11 +2,19 @@ const express = require('express');
 const router = express.Router();
 const controller = require('../controllers/teamController');
 
-router.post('/', controller.createTeam);
+const auth = require('../middlewares/authMiddleware');
+const requireRole = require('../middlewares/roleMiddleware');
+
+// Public read
 router.get('/', controller.getAllTeams);
 router.get('/:id', controller.getTeamById);
-router.put('/:id', controller.updateTeam);
-router.delete('/:id', controller.deleteTeam);
-router.post('/:id/members', controller.addTeamMember);
+
+// Protected writes with role checks
+router.post('/', auth, requireRole('manager', 'admin'), controller.createTeam);
+router.put('/:id', auth, requireRole('manager', 'admin'), controller.updateTeam);
+router.delete('/:id', auth, requireRole('admin'), controller.deleteTeam);
+
+// Add team member - manager+admin only
+router.post('/:id/members', auth, requireRole('manager', 'admin'), controller.addTeamMember);
 
 module.exports = router;

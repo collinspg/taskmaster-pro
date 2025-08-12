@@ -3,7 +3,7 @@ const Project = require('../models/projectModel');
 exports.createProject = async (req, res, next) => {
   try {
     const { name, description, members } = req.body;
-    const project = new Project({ name, description, members, createdBy: req.userId });
+    const project = new Project({ name, description, members, createdBy: req.user?.id });
     await project.save();
     res.status(201).json(project);
   } catch (err) {
